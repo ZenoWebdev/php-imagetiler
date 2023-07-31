@@ -11,37 +11,30 @@
 namespace chillerlan\Imagetiler;
 
 use chillerlan\Settings\SettingsContainerInterface;
-use ImageOptimizer\Optimizer;
 use Imagick;
-use Psr\Log\{LoggerAwareInterface, LoggerAwareTrait, LoggerInterface, NullLogger};
 
 use function ceil, dirname, extension_loaded, file_exists, ini_get, ini_set, is_dir,
 	is_file, is_readable, is_writable, mkdir, round, sprintf, unlink;
 
-class Imagetiler implements LoggerAwareInterface{
-	use LoggerAwareTrait;
-
+class Imagetiler
+{
 	/** @var \chillerlan\Imagetiler\ImagetilerOptions */
 	protected SettingsContainerInterface $options;
-	protected ?Optimizer $optimizer = null;
 
 	/**
 	 * Imagetiler constructor.
 	 *
 	 * @throws \chillerlan\Imagetiler\ImagetilerException
 	 */
-	public function __construct(SettingsContainerInterface $options = null, Optimizer $optimizer = null, LoggerInterface $logger = null){
+	public function __construct(SettingsContainerInterface $options = null){
 
 		if(!extension_loaded('imagick')){
 			throw new ImagetilerException('Imagick extension is not available');
 		}
 
 		$this->setOptions($options ?? new ImagetilerOptions);
-		$this->setLogger($logger ?? new NullLogger);
 
-		if($optimizer instanceof Optimizer){
-			$this->setOptimizer($optimizer);
-		}
+
 	}
 
 	/**
@@ -57,14 +50,6 @@ class Imagetiler implements LoggerAwareInterface{
 		if(ini_get('memory_limit') !== $this->options->memory_limit){
 			throw new ImagetilerException('ini settings differ from options');
 		}
-
-		return $this;
-	}
-
-	/**
-	 */
-	public function setOptimizer(Optimizer $optimizer):Imagetiler{
-		$this->optimizer = $optimizer;
 
 		return $this;
 	}
@@ -278,7 +263,7 @@ class Imagetiler implements LoggerAwareInterface{
 		}
 
 		if($this->options->optimize_output && $optimize && $this->optimizer instanceof Optimizer){
-			$this->optimizer->optimize($dest);
+			// -- Removed.
 		}
 
 	}
