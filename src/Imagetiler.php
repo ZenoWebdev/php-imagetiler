@@ -71,8 +71,6 @@ class Imagetiler
 
 		}
 
-		$this->logger->info('processing image: '.$image_path.', out path: '.$out_path);
-
 		// prepare the zoom base images
 		$base_images = $this->prepareZoomBaseImages($image_path, $out_path);
 
@@ -100,7 +98,7 @@ class Imagetiler
 
 				if(is_file($lvl_file)){
 					if(unlink($lvl_file)){
-						$this->logger->info('deleted base image for zoom level '.$zoom.': '.$lvl_file);
+
 					}
 				}
 			}
@@ -121,7 +119,6 @@ class Imagetiler
 			$base_image = $out_path.'/'.$zoom.'.'.$this->options->tile_ext;
 			// check if the base image already exists
 			if(!$this->options->overwrite_base_image && is_file($base_image)){
-				$this->logger->info('base image for zoom level '.$zoom.' already exists: '.$base_image);
 
 				continue;
 			}
@@ -139,8 +136,6 @@ class Imagetiler
 
 		$width  = $im->getimagewidth();
 		$height = $im->getImageHeight();
-
-		$this->logger->info('input image loaded: ['.$width.'x'.$height.'] '.$image_path);
 
 		foreach($base_images as $zoom => $base_image){
 			[$w, $h] = $this->getSize($width, $height, $zoom);
@@ -160,8 +155,6 @@ class Imagetiler
 				: $this->createTilesForZoom($il, $zoom, $out_path);
 
 			$this->clearImage($il);
-
-			$this->logger->info('created image for zoom level '.$zoom.' ['.$w.'x'.$h.'] '.$base_image);
 		}
 
 		$this->clearImage($im);
@@ -204,7 +197,6 @@ class Imagetiler
 
 				// check if tile already exists
 				if(!$this->options->overwrite_tile_image && is_file($tile)){
-					$this->logger->info('tile '.$zoom.'/'.$ix.'/'.$iy.' already exists: '.$tile);
 
 					continue;
 				}
@@ -232,11 +224,9 @@ class Imagetiler
 			}
 
 			$this->clearImage($ci);
-			$this->logger->info('created column '.$ix.', zoom = '.$zoom.', x = '.$cx);
 		}
 
 		$this->clearImage($im);
-		$this->logger->info('created tiles for zoom level: '.$zoom.', '.$x.' columns, '.$y.' tile(s) per column');
 	}
 
 	/**
